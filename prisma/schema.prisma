@@ -1,0 +1,138 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider        = "prisma-client"
+  previewFeatures = ["relationJoins"]
+  output          = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Roles {
+  roleId    Int      @id @default(autoincrement())
+  name      String   @unique @db.VarChar(50)
+  users     Users[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Users {
+  userId    Int       @id @default(autoincrement())
+  name      String    @db.VarChar(100)
+  username  String    @unique @db.VarChar(50)
+  email     String    @unique @db.VarChar(100)
+  password  String    @db.Text
+  role      Roles     @relation(fields: [roleId], references: [roleId])
+  roleId    Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Orders    Orders[]
+  Accounts  Account[]
+  Sessions  Session[]
+}
+
+model Categories {
+  categoryId Int        @id @default(autoincrement())
+  name       String     @unique @db.VarChar(100)
+  icon       String     @db.VarChar(100)
+  products   Products[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+}
+
+model Products {
+  productId      Int              @id @default(autoincrement())
+  name           String           @db.VarChar(200)
+  category       Categories       @relation(fields: [categoryId], references: [categoryId])
+  categoryId     Int
+  price          Float
+  stock          Int
+  discounts      Discounts[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  OrdersProducts OrdersProducts[]
+}
+
+model Discounts {
+  discountId Int      @id @default(autoincrement())
+  percentage Float
+  product    Products @relation(fields: [productId], references: [productId])
+  productId  Int
+  expiredAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Payments {
+  paymentId Int      @id @default(autoincrement())
+  method    String   @db.VarChar(50)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Orders    Orders[]
+}
+
+model Orders {
+  orderId        Int              @id @default(autoincrement())
+  cashier        Users            @relation(fields: [cashierId], references: [userId])
+  cashierId      Int
+  method         Payments         @relation(fields: [methodId], references: [paymentId])
+  methodId       Int
+  total          Float            
+  cash           Float
+  status         String           @db.VarChar(50)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  OrdersProducts OrdersProducts[]
+}
+
+model OrdersProducts {
+  orderProductId Int      @id @default(autoincrement())
+  order          Orders   @relation(fields: [orderId], references: [orderId])
+  orderId        Int
+  product        Products @relation(fields: [productId], references: [productId])
+  productId      Int
+  quantity       Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Account {
+  id                 Int       @id @default(autoincrement())
+  userId             Int
+  providerType       String
+  providerId         String    @unique
+  providerAccountId  String    @unique
+  refreshToken       String?
+  accessToken        String?
+  accessTokenExpires DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  user               Users     @relation(fields: [userId], references: [userId])
+}
+
+model Session {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  expires      DateTime
+  sessionToken String   @unique
+  accessToken  String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         Users    @relation(fields: [userId], references: [userId])
+}
+
+model VerificationRequest {
+  id         Int      @id @default(autoincrement())
+  identifier String   @unique
+  token      String   @unique
+  expires    DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
