@@ -1,0 +1,22 @@
+services:
+  app:
+    build: .
+    container_name: empu-store-app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mysql
+    environment:
+      DATABASE_URL: "mysql://root:bajuditoko@mysql:3306/empu-store"
+
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: bajuditoko
+      MYSQL_DATABASE: empu-store
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql-init:/docker-entrypoint-initdb.d

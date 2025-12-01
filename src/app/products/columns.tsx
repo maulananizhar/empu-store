@@ -1,16 +1,8 @@
+import { ProductsActionsCell } from "@/components/products/ProductsActionsCell";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { ProductsIcons } from "@/types/products";
 import { ColumnDef } from "@tanstack/react-table";
 import * as LucideIcons from "lucide-react";
-import { toast } from "sonner";
 
 type LucideIconName = keyof typeof LucideIcons;
 
@@ -30,6 +22,7 @@ export const columns: ColumnDef<ProductsIcons>[] = [
   },
   {
     accessorKey: "category.name",
+    id: "category.name",
     header: "Kategori",
     cell: ({ row }) => {
       const product = row.original;
@@ -49,11 +42,33 @@ export const columns: ColumnDef<ProductsIcons>[] = [
   },
   {
     accessorKey: "stock",
-    header: "Stok",
+    header: ({ column }) => (
+      <Button variant="ghost" onClick={() => column.toggleSorting()}>
+        Stok
+        {column.getIsSorted() === "desc" ? (
+          <LucideIcons.ArrowDown className="ml-2 h-4 w-4" />
+        ) : column.getIsSorted() === "asc" ? (
+          <LucideIcons.ArrowUp className="ml-2 h-4 w-4" />
+        ) : (
+          <LucideIcons.ArrowUpDown className="ml-2 h-4 w-4" />
+        )}
+      </Button>
+    ),
   },
   {
     accessorKey: "price",
-    header: "Harga",
+    header: ({ column }) => (
+      <Button variant="ghost" onClick={() => column.toggleSorting()}>
+        Harga
+        {column.getIsSorted() === "desc" ? (
+          <LucideIcons.ArrowDown className="ml-2 h-4 w-4" />
+        ) : column.getIsSorted() === "asc" ? (
+          <LucideIcons.ArrowUp className="ml-2 h-4 w-4" />
+        ) : (
+          <LucideIcons.ArrowUpDown className="ml-2 h-4 w-4" />
+        )}
+      </Button>
+    ),
     cell: ({ row }) => {
       return `Rp${row.original.price.toLocaleString("id-ID")}`;
     },
@@ -61,35 +76,6 @@ export const columns: ColumnDef<ProductsIcons>[] = [
   {
     id: "actions",
     header: "Aksi",
-    cell: ({ row }) => {
-      const product = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <LucideIcons.MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Aksi</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() =>
-                navigator.clipboard
-                  .writeText(product.productId.toString())
-                  .then(() => {
-                    toast.success("Product ID disalin ke clipboard");
-                  })
-              }>
-              Copy product ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
+    cell: ProductsActionsCell,
   },
 ];

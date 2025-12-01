@@ -5,7 +5,7 @@ import { getServerSession } from "next-auth";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { SessionProviderWrapper } from "@/components/session-provider";
-import { authOptions } from "./api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,6 +31,7 @@ export default async function RootLayout({
 
   return (
     <html lang="id" suppressHydrationWarning>
+      <link rel="icon" href="/logo-smkn-40.png" />
       <body
         className={`${geistSans.className} antialiased`}
         suppressHydrationWarning>

@@ -86,7 +86,7 @@ export default function Page() {
   } = useSWR("/api/orders-product", () => fetchOrdersProducts(orderId || 0));
 
   const { data: discounts } = useSWR("/api/discounts", () =>
-    fetchDiscounts(ordersProducts?.updatedAt ?? new Date(9999, 0, 1))
+    fetchDiscounts(ordersProducts?.createdAt ?? new Date(0, 0, 1))
   );
 
   // Mutate products data when filters change
@@ -138,6 +138,10 @@ export default function Page() {
       });
     }
   }, [debouncedPaymentAmount, total, orderId]);
+
+  useEffect(() => {
+    mutate("/api/discounts");
+  }, [ordersProducts?.createdAt]);
 
   return (
     <>

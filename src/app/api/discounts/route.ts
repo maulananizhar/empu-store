@@ -1,20 +1,40 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@/generated/prisma/client";
+import { Discounts, discountsExtended } from "@/types/discounts";
 
 const prisma = new PrismaClient();
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    // Get current timestamp
-    const now = new Date();
+    // Get parameters from the request URL
+    const { searchParams } = new URL(request.url);
+
+    // Retrieve name from query parameters
+    const dateRaw = searchParams.get("date") || "";
+    const all = searchParams.get("all") === "false" ? false : true;
+
+    // Validate date parameter
+    if (!dateRaw || isNaN(Date.parse(dateRaw)) || dateRaw === "") {
+      return NextResponse.json(
+        {
+          status: "error",
+          message: "Tanggal tidak valid.",
+        },
+        { status: 400 }
+      );
+    }
+
+    const date = new Date(dateRaw).toISOString();
 
     // Fetch discounts from the database
     const discounts = await prisma.discounts.findMany({
-      where: {
-        expiredAt: {
-          gt: now,
-        },
-      },
+      where: all
+        ? {}
+        : {
+            expiredAt: { gte: new Date(date) },
+            createdAt: { lte: new Date(date) },
+          },
+      ...discountsExtended,
     });
 
     // Return the discounts in the response
@@ -22,7 +42,9 @@ export async function GET() {
       {
         status: "success",
         message: "Discounts retrieved successfully",
-        data: discounts,
+        data: discounts as Discounts[],
+        gt: date,
+        lte: all ? new Date("3000-01-01") : date,
       },
       { status: 200 }
     );

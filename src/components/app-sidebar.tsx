@@ -15,6 +15,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import {
+  LucideBadgePercent,
   LucideBox,
   LucideBoxes,
   LucideCalculator,
@@ -23,6 +24,7 @@ import {
   LucideGauge,
   LucideLogOut,
   LucideShoppingCart,
+  LucideUser,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { Separator } from "./ui/separator";
@@ -47,6 +49,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { createOrder } from "@/services/orderApi";
 import { useOrder } from "@/store/orderStore";
+import Image from "next/image";
 
 export function AppSidebar({ children }: { children: React.ReactNode }) {
   // Get session and authentication status
@@ -78,7 +81,14 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
     return (
       <>
         <Sidebar variant="inset">
-          <SidebarHeader className="p-4">
+          <SidebarHeader className="flex flex-row items-center p-4">
+            <Image
+              src="/logo-smkn-40.png"
+              alt="Empu Store Logo"
+              width={400}
+              height={400}
+              className="h-12 w-12"
+            />
             <p className="font-bold text-black">Empu Store</p>
           </SidebarHeader>
           <SidebarContent>
@@ -116,7 +126,8 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                  <SidebarMenuItem>
+                  <SidebarMenuItem
+                    className={session.user.role !== "Manager" ? "hidden" : ""}>
                     <SidebarMenuButton
                       asChild
                       isActive={pathname === "/products" ? true : false}>
@@ -126,13 +137,36 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                  <SidebarMenuItem>
+                  <SidebarMenuItem
+                    className={session.user.role !== "Manager" ? "hidden" : ""}>
                     <SidebarMenuButton
                       asChild
                       isActive={pathname === "/categories" ? true : false}>
                       <Link href="/categories">
                         <LucideBoxes className="mr-2 h-4 w-4" />
                         <span>Kategori</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem
+                    className={session.user.role !== "Manager" ? "hidden" : ""}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={pathname === "/discounts" ? true : false}>
+                      <Link href="/discounts">
+                        <LucideBadgePercent className="mr-2 h-4 w-4" />
+                        <span>Diskon</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem
+                    className={session.user.role !== "Manager" ? "hidden" : ""}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={pathname === "/users" ? true : false}>
+                      <Link href="/users">
+                        <LucideUser className="mr-2 h-4 w-4" />
+                        <span>User</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

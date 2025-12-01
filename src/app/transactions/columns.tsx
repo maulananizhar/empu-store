@@ -12,13 +12,7 @@ import {
 import { Orders } from "@/generated/prisma/browser";
 import { useOrder } from "@/store/orderStore";
 import { ColumnDef } from "@tanstack/react-table";
-import {
-  CheckCircle,
-  XCircle,
-  Clock,
-  ArrowUpDown,
-  MoreHorizontal,
-} from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import Link from "next/link";
 import { DateRange } from "react-day-picker";
 import { toast } from "sonner";
@@ -41,11 +35,15 @@ export const columns: ColumnDef<Orders>[] = [
     accessorKey: "total",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button variant="ghost" onClick={() => column.toggleSorting()}>
           Total
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          {column.getIsSorted() === "desc" ? (
+            <LucideIcons.ArrowDown className="ml-2 h-4 w-4" />
+          ) : column.getIsSorted() === "asc" ? (
+            <LucideIcons.ArrowUp className="ml-2 h-4 w-4" />
+          ) : (
+            <LucideIcons.ArrowUpDown className="ml-2 h-4 w-4" />
+          )}
         </Button>
       );
     },
@@ -64,15 +62,15 @@ export const columns: ColumnDef<Orders>[] = [
       > = {
         Sukses: {
           color: "bg-green-100 text-green-800",
-          icon: <CheckCircle className="w-3 h-3 mr-1 inline" />,
+          icon: <LucideIcons.CheckCircle className="w-3 h-3 mr-1 inline" />,
         },
         Gagal: {
           color: "bg-red-100 text-red-800",
-          icon: <XCircle className="w-3 h-3 mr-1 inline" />,
+          icon: <LucideIcons.XCircle className="w-3 h-3 mr-1 inline" />,
         },
         Pending: {
           color: "bg-yellow-100 text-yellow-800",
-          icon: <Clock className="w-3 h-3 mr-1 inline" />,
+          icon: <LucideIcons.Clock className="w-3 h-3 mr-1 inline" />,
         },
       };
       const config = statusConfig[status] || {
@@ -93,11 +91,15 @@ export const columns: ColumnDef<Orders>[] = [
     accessorKey: "createdAt",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <Button variant="ghost" onClick={() => column.toggleSorting()}>
           Tanggal
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          {column.getIsSorted() === "desc" ? (
+            <LucideIcons.ArrowDown className="ml-2 h-4 w-4" />
+          ) : column.getIsSorted() === "asc" ? (
+            <LucideIcons.ArrowUp className="ml-2 h-4 w-4" />
+          ) : (
+            <LucideIcons.ArrowUpDown className="ml-2 h-4 w-4" />
+          )}
         </Button>
       );
     },
@@ -170,7 +172,7 @@ export const columns: ColumnDef<Orders>[] = [
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
               <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
+              <LucideIcons.MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

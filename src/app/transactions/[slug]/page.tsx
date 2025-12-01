@@ -11,8 +11,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Image from "next/image";
-import { use } from "react";
-import useSWR from "swr";
+import { use, useEffect } from "react";
+import useSWR, { mutate } from "swr";
 import { fetchOrdersProducts } from "@/services/orderProductsApi";
 import { fetchDiscounts } from "@/services/discountsApi";
 import { Discounts } from "@/generated/prisma/browser";
@@ -74,8 +74,12 @@ export default function Page({
   }
 
   const { data: discounts } = useSWR("/api/discounts", () =>
-    fetchDiscounts(ordersProducts?.updatedAt ?? new Date(9999, 0, 1))
+    fetchDiscounts(ordersProducts?.createdAt ?? new Date(0, 0, 1))
   );
+
+  useEffect(() => {
+    mutate("/api/discounts");
+  }, [ordersProducts?.createdAt]);
 
   return (
     <>

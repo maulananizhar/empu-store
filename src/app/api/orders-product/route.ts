@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@/generated/prisma/client";
 import { z } from "zod";
-import { OrdersProductsExtended } from "@/types/ordersProducts";
+import {
+  ordersProductsExtended,
+  OrdersProductsExtended,
+} from "@/types/ordersProducts";
 
 const prisma = new PrismaClient();
 
@@ -38,36 +41,7 @@ export async function POST(request: Request) {
       where: {
         orderId: validatedFields.data.orderId,
       },
-      include: {
-        OrdersProducts: {
-          select: {
-            orderProductId: true,
-            quantity: true,
-            product: {
-              select: {
-                productId: true,
-                name: true,
-                price: true,
-                category: {
-                  select: {
-                    icon: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-        cashier: {
-          select: {
-            name: true,
-          },
-        },
-        method: {
-          select: {
-            method: true,
-          },
-        },
-      },
+      ...ordersProductsExtended,
     });
 
     // Return the orders in the response

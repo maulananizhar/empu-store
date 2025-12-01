@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@/generated/prisma/client";
+import { categoriesExtended } from "@/types/categories";
 
 const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
   try {
-    // Get parameters from the request URLA
+    // Get parameters from the request URL
     const { searchParams } = new URL(request.url);
 
     // Retrieve name from query parameters
@@ -18,6 +19,7 @@ export async function GET(request: Request) {
           contains: name,
         },
       },
+      ...categoriesExtended,
     });
 
     // Return the products in the response

@@ -1,24 +1,41 @@
-import { Orders } from "@/generated/prisma/browser";
+import {
+  OrdersFindManyArgs,
+  OrdersGetPayload,
+} from "@/generated/prisma/models";
 
-interface OrdersProductsExtended extends Orders {
-  OrdersProducts: {
-    orderProductId: number;
-    quantity: number;
-    product: {
-      productId: number;
-      name: string;
-      price: number;
-      category: {
-        icon: string;
-      };
-    };
-  }[];
-  cashier: {
-    name: string;
-  };
-  method: {
-    method: string;
-  };
-}
+export const ordersProductsExtended = {
+  include: {
+    OrdersProducts: {
+      select: {
+        orderProductId: true,
+        quantity: true,
+        product: {
+          select: {
+            productId: true,
+            name: true,
+            price: true,
+            category: {
+              select: {
+                icon: true,
+              },
+            },
+          },
+        },
+      },
+    },
+    cashier: {
+      select: {
+        name: true,
+      },
+    },
+    method: {
+      select: {
+        method: true,
+      },
+    },
+  },
+} satisfies OrdersFindManyArgs;
 
-export type { OrdersProductsExtended };
+export type OrdersProductsExtended = OrdersGetPayload<
+  typeof ordersProductsExtended
+>;

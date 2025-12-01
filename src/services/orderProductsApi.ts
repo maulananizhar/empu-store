@@ -19,7 +19,15 @@ async function fetchOrdersProducts(orderId: number) {
     );
     return response.data.data as OrdersProductsExtended;
   } catch (error) {
-    throw error;
+    if (axios.isAxiosError(error)) {
+      toast.error(
+        `${
+          (error.response?.data as { message: string })?.message ||
+          error.message
+        }`,
+        { richColors: true }
+      );
+    }
   }
 }
 
@@ -39,7 +47,15 @@ async function addProductToOrder(orderId: number, productId: number) {
     );
     return response.data.data as OrdersProducts;
   } catch (error) {
-    throw error;
+    if (axios.isAxiosError(error)) {
+      toast.error(
+        `${
+          (error.response?.data as { message: string })?.message ||
+          error.message
+        }`,
+        { richColors: true }
+      );
+    }
   }
 }
 
@@ -62,13 +78,15 @@ async function addQuantityToOrderProduct(
     );
     return response.data.data as { count: number };
   } catch (error) {
-    if (
-      axios.isAxiosError(error) &&
-      error.response?.data.message == "Insufficient stock."
-    ) {
-      return toast.error("Stok tidak mencukupi.");
+    if (axios.isAxiosError(error)) {
+      toast.error(
+        `${
+          (error.response?.data as { message: string })?.message ||
+          error.message
+        }`,
+        { richColors: true }
+      );
     }
-    throw error;
   }
 }
 

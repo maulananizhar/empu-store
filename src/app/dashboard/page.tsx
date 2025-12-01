@@ -7,7 +7,9 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { fetchDashboard } from "@/services/dashboardApi";
 import { Area, AreaChart, XAxis } from "recharts";
+import useSWR from "swr";
 
 const chartData = [
   { month: "January", desktop: 186, mobile: 80 },
@@ -35,36 +37,40 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export default function Page() {
+  const { data } = useSWR("/api/dashboard", () => fetchDashboard());
+
   return (
     <>
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-4">
         <StatisticCard
           title="Total Pendapatan"
-          value={15750000}
-          trend={10}
+          value={data?.total.thisMonth || 0}
+          trend={data?.total.change || 0}
           description="Pendapatan bulan ini"
           subDescription="Dibandingkan bulan lalu"
         />
         <StatisticCard
           title="Pesanan Baru"
-          value={89}
-          trend={-5}
+          value={data?.transactionCount.thisMonth || 0}
+          trend={data?.transactionCount.change || 0}
           description="Pesanan sebulan terakhir"
           subDescription="Semua status pesanan"
         />
         <StatisticCard
           title="Produk Terjual"
-          value={247}
-          trend={-56}
+          value={data?.orderedProductsCount.thisMonth || 0}
+          trend={data?.orderedProductsCount.change || 0}
           description="Jumlah unit terjual bulan ini"
           subDescription="Dari semua transaksi berhasil"
         />
         <StatisticCard
-          title="Produk Habis Stok"
-          value={14}
-          trend={15}
-          description="Jumlah produk kosong"
-          subDescription="Perlu segera diisi ulang"
+          title="Produk Terlaris"
+          value={data?.highestSellingProduct.product || 0}
+          trend={0}
+          description={`Jumlah unit terjual: ${
+            data?.highestSellingProduct.quantity || 0
+          }`}
+          subDescription="Dari satu produk"
         />
       </div>
       <div className="rounded-lg border py-4 bg-gradient-to-t bg-white flex flex-col mt-4 px-4">

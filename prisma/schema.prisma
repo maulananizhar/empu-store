@@ -84,7 +84,7 @@ model Orders {
   cashierId      Int
   method         Payments         @relation(fields: [methodId], references: [paymentId])
   methodId       Int
-  total          Float            
+  total          Float
   cash           Float
   status         String           @db.VarChar(50)
   createdAt      DateTime         @default(now())
