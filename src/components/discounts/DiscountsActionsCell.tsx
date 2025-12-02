@@ -76,11 +76,13 @@ export function DiscountsActionsCell({ row }: { row: Row<Discounts> }) {
 
           <DropdownMenuSeparator />
 
-          <DropdownMenuItem onSelect={() => setShowEditDialog(true)}>
+          <DropdownMenuItem
+            onSelect={() => setShowEditDialog(true)}
+            disabled={new Date(discount.expiredAt) < new Date()}>
             Edit Diskon
           </DropdownMenuItem>
           <DropdownMenuItem
-            // disabled={new Date(discount.expiredAt) < new Date()}
+            disabled={new Date(discount.expiredAt) < new Date()}
             onSelect={() => {
               deleteDiscount(discount.discountId, discount.productId).then(
                 () => {

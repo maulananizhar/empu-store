@@ -136,4 +136,44 @@ async function updateUser(
   }
 }
 
-export { fetchUsers, fetchRoles, createUsers, deleteUsers, updateUser };
+async function changePassword(
+  userId: number,
+  oldPassword: string,
+  newPassword: string,
+  confirmNewPassword: string
+) {
+  try {
+    const response: AxiosResponse<AxiosExtendedResponse<Users>> =
+      await axios.put(
+        "/api/users/change-password",
+        {
+          userId,
+          oldPassword,
+          newPassword,
+          confirmNewPassword,
+        },
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+    toast.success(response.data.message, { richColors: true });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      toast.error(
+        `${
+          (error.response?.data as { message: string })?.message ||
+          error.message
+        }`,
+        { richColors: true }
+      );
+    }
+  }
+}
+
+export {
+  fetchUsers,
+  fetchRoles,
+  createUsers,
+  deleteUsers,
+  updateUser,
+  changePassword,
+};

@@ -15,11 +15,11 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import {
+  KeyRound,
   LucideBadgePercent,
   LucideBox,
   LucideBoxes,
   LucideCalculator,
-  LucideEdit,
   LucideEllipsisVertical,
   LucideGauge,
   LucideLogOut,
@@ -50,6 +50,19 @@ import {
 import { createOrder } from "@/services/orderApi";
 import { useOrder } from "@/store/orderStore";
 import Image from "next/image";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
+import { useState } from "react";
+import { Label } from "./ui/label";
+import { Input } from "./ui/input";
+import { changePassword } from "@/services/usersApi";
 
 export function AppSidebar({ children }: { children: React.ReactNode }) {
   // Get session and authentication status
@@ -67,6 +80,12 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
 
   // Handle state
   const { setOrderId } = useOrder();
+
+  const [showChangePasswordDialog, setShowChangePasswordDialog] =
+    useState(false);
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
   // Render loading state if authentication status is loading
   if (status === "loading") {
@@ -210,9 +229,10 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
                   <DropdownMenuLabel>Aksi</DropdownMenuLabel>
-                  <DropdownMenuItem className="">
-                    <LucideEdit className="h-4 w-4" />
-                    Edit Profile
+                  <DropdownMenuItem
+                    onClick={() => setShowChangePasswordDialog(true)}>
+                    <KeyRound className="h-4 w-4" />
+                    Ubah Sandi
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => signOut()}>
                     <LucideLogOut className="h-4 w-4" />
@@ -269,6 +289,69 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
             <div className="py-2 px-4 flex-1 overflow-y-auto">{children}</div>
           </div>
         </SidebarInset>
+
+        <Dialog
+          open={showChangePasswordDialog}
+          onOpenChange={setShowChangePasswordDialog}>
+          <DialogContent>
+            <form>
+              <DialogHeader className="mb-4">
+                <DialogTitle>Ubah Sandi</DialogTitle>
+                <DialogDescription>
+                  Isi form di bawah untuk mengubah sandi Anda.
+                </DialogDescription>
+              </DialogHeader>
+              <div>
+                <div>
+                  <Label className="text-sm">Sandi Saat Ini</Label>
+                  <Input
+                    type="password"
+                    value={oldPassword}
+                    onChange={e => setOldPassword(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm">Sandi Baru</Label>
+                  <Input
+                    type="password"
+                    value={newPassword}
+                    onChange={e => setNewPassword(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm">Konfirmasi Sandi Baru</Label>
+                  <Input
+                    type="password"
+                    value={confirmNewPassword}
+                    onChange={e => setConfirmNewPassword(e.target.value)}
+                  />
+                </div>
+              </div>
+              <DialogFooter className="mt-4">
+                <DialogClose asChild>
+                  <Button variant="outline">Batal</Button>
+                </DialogClose>
+                <Button
+                  onClick={e => {
+                    e.preventDefault();
+                    changePassword(
+                      session.user.id,
+                      oldPassword,
+                      newPassword,
+                      confirmNewPassword
+                    ).then(() => {
+                      setShowChangePasswordDialog(false);
+                      setOldPassword("");
+                      setNewPassword("");
+                      setConfirmNewPassword("");
+                    });
+                  }}>
+                  Ubah Sandi
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
       </>
     );
 }
