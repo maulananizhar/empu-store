@@ -22,4 +22,9 @@ export type DashboardData = {
     product: string;
     quantity: number;
   };
+  graphData: {
+    date: string;
+    qris: number;
+    cash: number;
+  }[];
 };

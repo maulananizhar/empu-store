@@ -11,18 +11,40 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { use, useEffect } from "react";
+import { use, useEffect, useRef } from "react";
 import useSWR, { mutate } from "swr";
 import { fetchOrdersProducts } from "@/services/orderProductsApi";
 import { fetchDiscounts } from "@/services/discountsApi";
 import { Discounts } from "@/generated/prisma/browser";
 import { OrdersProductsExtended } from "@/types/ordersProducts";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import { Button } from "@/components/ui/button";
 
 export default function Page({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  const printRef = useRef(null);
+
+  const handleDownloadPdf = async () => {
+    const element = printRef.current;
+    if (!element) return;
+
+    const canvas = await html2canvas(element, { scale: 1 });
+    const data = canvas.toDataURL("image/png");
+
+    const pdf = new jsPDF("p", "px", "a4");
+
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+    pdf.addImage(data, "PNG", 0, 0, pdfWidth, pdfHeight);
+
+    pdf.save(`invoice-${await params.then(p => p.slug)}.pdf`);
+  };
+
   const { slug } = use(params);
 
   const {
@@ -83,7 +105,10 @@ export default function Page({
 
   return (
     <>
-      <div className="flex flex-col w-1/2 mx-auto border">
+      <div
+        className="flex flex-col w-1/2 mx-auto border"
+        ref={printRef}
+        style={{ width: "700px" }}>
         <div className="flex w-full justify-between px-8 pt-4">
           <div className="flex flex-col justify-center">
             <p className="text-2xl font-bold">INVOICE</p>
@@ -310,6 +335,15 @@ export default function Page({
             </TableFooter>
           </Table>
         </div>
+      </div>
+      <div className="mt-4 w-1/2 mx-auto">
+        <Button
+          onClick={() => {
+            handleDownloadPdf();
+          }}
+          className="w-full">
+          Download PDF
+        </Button>
       </div>
     </>
   );

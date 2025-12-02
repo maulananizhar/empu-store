@@ -99,7 +99,7 @@ function TotalCounter({
         <div className="flex gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button className="w-full mt-2">
+              <Button className="w-full mt-2" disabled={status === "Sukses"}>
                 {paymentMethods.find(
                   method => method.paymentId === paymentMethodId
                 )?.method || "Pilih Metode"}

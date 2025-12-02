@@ -11,7 +11,13 @@ function isLucideIconName(name: string): name is LucideIconName {
   return name in LucideIcons;
 }
 
-function CashierMenuCard({ product }: { product: ProductsIcons }) {
+function CashierMenuCard({
+  product,
+  status,
+}: {
+  product: ProductsIcons;
+  status?: string;
+}) {
   const { orderId } = useOrder();
 
   const Icon = isLucideIconName(product.category.icon)
@@ -23,8 +29,15 @@ function CashierMenuCard({ product }: { product: ProductsIcons }) {
   return (
     <>
       <div
-        className="flex flex-col p-4 hover:bg-gray-200 cursor-pointer duration-200 border-b"
+        className={`flex flex-col p-4 hover:bg-gray-200 cursor-pointer duration-200 border-b ${
+          status === "Sukses" ? "opacity-50 cursor-not-allowed" : ""
+        }`}
         onClick={async () => {
+          if (status === "Sukses") {
+            return toast.error("Transaksi sudah selesai.", {
+              richColors: true,
+            });
+          }
           if (!orderId)
             return toast.error("Belum ada transaksi.", {
               richColors: true,

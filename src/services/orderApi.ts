@@ -63,4 +63,23 @@ async function updateOrder(orderId: number, updatedData: Partial<Orders>) {
   }
 }
 
-export { fetchOrders, createOrder, updateOrder };
+async function exportOrdersToCSV(from: string, to: string) {
+  try {
+    const response = await axios.get(
+      `/api/orders/export-to-csv?from=${from}&to=${to}`
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      toast.error(
+        `${
+          (error.response?.data as { message: string })?.message ||
+          error.message
+        }`,
+        { richColors: true }
+      );
+    }
+  }
+}
+
+export { fetchOrders, createOrder, updateOrder, exportOrdersToCSV };
