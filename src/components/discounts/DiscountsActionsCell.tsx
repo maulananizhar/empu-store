@@ -35,6 +35,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { format } from "date-fns";
 import { Calendar } from "../ui/calendar";
 import { deleteDiscount, updateDiscount } from "@/services/discountsApi";
+import { toast } from "sonner";
 
 export function DiscountsActionsCell({ row }: { row: Row<Discounts> }) {
   const discount = row.original;
@@ -66,9 +67,10 @@ export function DiscountsActionsCell({ row }: { row: Row<Discounts> }) {
           <DropdownMenuLabel>Aksi</DropdownMenuLabel>
 
           <DropdownMenuItem
-            onClick={() =>
-              navigator.clipboard.writeText(discount.discountId.toString())
-            }>
+            onClick={() => {
+              navigator.clipboard.writeText(discount.discountId.toString());
+              toast.success("Diskon ID disalin ke clipboard");
+            }}>
             Salin Diskon ID
           </DropdownMenuItem>
 

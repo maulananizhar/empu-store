@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@/generated/prisma/client";
-import { categoriesExtended } from "@/types/categories";
+import { AxiosExtendedResponse } from "@/types/axios";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 
 const prisma = new PrismaClient();
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
     // Get the user session
     const session = await getServerSession(authOptions);
@@ -22,36 +22,21 @@ export async function GET(request: Request) {
       );
     }
 
-    // Get parameters from the request URL
-    const { searchParams } = new URL(request.url);
+    const paymentMethods = await prisma.payments.findMany();
 
-    // Retrieve name from query parameters
-    const name = searchParams.get("name") || "";
-
-    // Fetch products from the database based on the provided parameters
-    const categories = await prisma.categories.findMany({
-      where: {
-        name: {
-          contains: name,
-        },
-      },
-      ...categoriesExtended,
-    });
-
-    // Return the products in the response
     return NextResponse.json(
       {
         status: "success",
-        message: "Categories retrieved successfully",
-        data: categories,
-      },
+        message: "Payment methods retrieved successfully",
+        data: paymentMethods,
+      } as AxiosExtendedResponse<typeof paymentMethods>,
       { status: 200 }
     );
   } catch (error) {
     return NextResponse.json(
       {
         status: "error",
-        message: "Failed to retrieve categories",
+        message: "Failed to retrieve products",
         error: (error as Error).name,
       },
       { status: 500 }

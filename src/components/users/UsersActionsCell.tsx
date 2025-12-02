@@ -31,6 +31,7 @@ import { Row } from "@tanstack/react-table";
 import useSWR, { mutate } from "swr";
 import { Users } from "@/types/users";
 import { deleteUsers, fetchRoles, updateUser } from "@/services/usersApi";
+import { toast } from "sonner";
 
 export function UsersActionsCell({ row }: { row: Row<Users> }) {
   const user = row.original;
@@ -63,9 +64,10 @@ export function UsersActionsCell({ row }: { row: Row<Users> }) {
           <DropdownMenuLabel>Aksi</DropdownMenuLabel>
 
           <DropdownMenuItem
-            onClick={() =>
-              navigator.clipboard.writeText(user.userId.toString())
-            }>
+            onClick={() => {
+              navigator.clipboard.writeText(user.userId.toString());
+              toast.success("User ID disalin ke clipboard");
+            }}>
             Salin User ID
           </DropdownMenuItem>
 

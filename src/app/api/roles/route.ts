@@ -7,29 +7,29 @@ import { authOptions } from "@/lib/authOptions";
 const prisma = new PrismaClient();
 
 export async function GET() {
-  const session = await getServerSession(authOptions);
-
-  if (!session) {
-    return NextResponse.json(
-      {
-        status: "error",
-        message: "Unauthorized",
-      },
-      { status: 401 }
-    );
-  }
-
-  if (!session.user.role || session.user.role !== "Manager") {
-    return NextResponse.json(
-      {
-        status: "error",
-        message: "Forbidden",
-      },
-      { status: 403 }
-    );
-  }
-
   try {
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      return NextResponse.json(
+        {
+          status: "error",
+          message: "Unauthorized",
+        },
+        { status: 401 }
+      );
+    }
+
+    if (!session.user.role || session.user.role !== "Manager") {
+      return NextResponse.json(
+        {
+          status: "error",
+          message: "Forbidden",
+        },
+        { status: 403 }
+      );
+    }
+
     const roles = await prisma.roles.findMany();
 
     return NextResponse.json(

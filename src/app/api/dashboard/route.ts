@@ -20,6 +20,7 @@ export async function GET() {
         total: true,
       },
       where: {
+        status: "Sukses",
         createdAt: {
           gte: startOfMonth,
           lte: endOfMonth,
@@ -33,6 +34,7 @@ export async function GET() {
         total: true,
       },
       where: {
+        status: "Sukses",
         createdAt: {
           gte: lastStartOfMonth,
           lte: lastEndOfMonth,
@@ -43,6 +45,7 @@ export async function GET() {
     // Fetch transactions counts from the database
     const transactionCounts = await prisma.orders.count({
       where: {
+        status: "Sukses",
         createdAt: {
           gte: startOfMonth,
           lte: endOfMonth,
@@ -53,6 +56,7 @@ export async function GET() {
     // Fetch last month's transactions counts from the database
     const lastTransactionCounts = await prisma.orders.count({
       where: {
+        status: "Sukses",
         createdAt: {
           gte: lastStartOfMonth,
           lte: lastEndOfMonth,
@@ -66,6 +70,9 @@ export async function GET() {
           quantity: true,
         },
         where: {
+          order: {
+            status: "Sukses",
+          },
           createdAt: {
             gte: startOfMonth,
             lte: endOfMonth,
@@ -80,6 +87,9 @@ export async function GET() {
           quantity: true,
         },
         where: {
+          order: {
+            status: "Sukses",
+          },
           createdAt: {
             gte: lastStartOfMonth,
             lte: lastEndOfMonth,
@@ -94,6 +104,9 @@ export async function GET() {
         quantity: true,
       },
       where: {
+        order: {
+          status: "Sukses",
+        },
         createdAt: {
           gte: startOfMonth,
           lte: endOfMonth,

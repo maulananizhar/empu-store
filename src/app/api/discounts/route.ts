@@ -1,11 +1,27 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@/generated/prisma/client";
 import { Discounts, discountsExtended } from "@/types/discounts";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/authOptions";
 
 const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
   try {
+    // Get the user session
+    const session = await getServerSession(authOptions);
+
+    // If no session, return unauthorized
+    if (!session) {
+      return NextResponse.json(
+        {
+          status: "error",
+          message: "Unauthorized",
+        },
+        { status: 401 }
+      );
+    }
+
     // Get parameters from the request URL
     const { searchParams } = new URL(request.url);
 

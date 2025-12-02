@@ -1,4 +1,6 @@
 import { PrismaClient } from "@/generated/prisma/client";
+import { authOptions } from "@/lib/authOptions";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import z from "zod";
 
@@ -10,6 +12,20 @@ const schema = z.object({
 
 export async function POST(request: Request) {
   try {
+    // Get the user session
+    const session = await getServerSession(authOptions);
+
+    // If no session, return unauthorized
+    if (!session) {
+      return NextResponse.json(
+        {
+          status: "error",
+          message: "Unauthorized",
+        },
+        { status: 401 }
+      );
+    }
+
     // Parse the request body
     const formData = await request.formData();
 

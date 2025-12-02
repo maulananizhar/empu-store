@@ -1,6 +1,7 @@
 import { Orders } from "@/generated/prisma/browser";
 import { OrderExtended } from "@/types/orders";
 import axios from "axios";
+import { toast } from "sonner";
 
 // Function to fetch products from the API
 async function fetchOrders() {
@@ -39,6 +40,7 @@ async function updateOrder(orderId: number, updatedData: Partial<Orders>) {
         orderId: orderId,
         total: updatedData.total,
         cash: updatedData.cash,
+        methodId: updatedData.methodId,
         status: updatedData.status,
       },
       {
@@ -49,7 +51,15 @@ async function updateOrder(orderId: number, updatedData: Partial<Orders>) {
     );
     return response.data.data as Orders;
   } catch (error) {
-    throw error;
+    if (axios.isAxiosError(error)) {
+      toast.error(
+        `${
+          (error.response?.data as { message: string })?.message ||
+          error.message
+        }`,
+        { richColors: true }
+      );
+    }
   }
 }
 

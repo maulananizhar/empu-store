@@ -41,6 +41,7 @@ import { Button } from "@/components/ui/button";
 import { LucideCalculator } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { fetchPaymentMethods } from "@/services/paymentMethodsApi";
 
 export default function Page() {
   // Session and router can be used here if needed
@@ -58,6 +59,7 @@ export default function Page() {
   const [totalDiscount, setTotalDiscount] = useState<number>(0);
   const [total, setTotal] = useState<number>(0);
   const [changeAmount, setChangeAmount] = useState<number>(0);
+  const [paymentMethodId, setPaymentMethodId] = useState<number>(1);
 
   // Zustand store can be used here if needed
   const { orderId, setOrderId } = useOrder();
@@ -87,6 +89,10 @@ export default function Page() {
 
   const { data: discounts } = useSWR("/api/discounts", () =>
     fetchDiscounts(ordersProducts?.createdAt ?? new Date(0, 0, 1))
+  );
+
+  const { data: paymentMethods } = useSWR("/api/payment-methods", () =>
+    fetchPaymentMethods()
   );
 
   // Mutate products data when filters change
@@ -134,10 +140,17 @@ export default function Page() {
       updateOrder(orderId || 0, {
         total: total,
         cash: debouncedPaymentAmount,
-        status: "Pending",
+        methodId: paymentMethodId,
+        status: ordersProducts?.status || "Pending",
       });
     }
-  }, [debouncedPaymentAmount, total, orderId]);
+  }, [
+    debouncedPaymentAmount,
+    total,
+    orderId,
+    paymentMethodId,
+    ordersProducts?.status,
+  ]);
 
   useEffect(() => {
     mutate("/api/discounts");
@@ -250,7 +263,11 @@ export default function Page() {
             totalItems={totalItems}
             paymentAmount={paymentAmount || 0}
             changeAmount={changeAmount}
+            paymentMethods={paymentMethods || []}
+            paymentMethodId={paymentMethodId || 0}
+            status={ordersProducts?.status || "Pending"}
             setPaymentAmount={setPaymentAmount}
+            setPaymentMethodId={setPaymentMethodId}
           />
         </div>
       </div>

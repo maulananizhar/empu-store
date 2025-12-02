@@ -67,9 +67,10 @@ export function CategoryActionsCell({ row }: { row: Row<Categories> }) {
           <DropdownMenuLabel>Aksi</DropdownMenuLabel>
 
           <DropdownMenuItem
-            onClick={() =>
-              navigator.clipboard.writeText(categories.categoryId.toString())
-            }>
+            onClick={() => {
+              navigator.clipboard.writeText(categories.categoryId.toString());
+              toast.success("Kategori ID disalin ke clipboard");
+            }}>
             Salin Kategori ID
           </DropdownMenuItem>
 

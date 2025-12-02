@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@/generated/prisma/client";
 import z from "zod";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/authOptions";
 
 const prisma = new PrismaClient();
 
@@ -11,6 +13,31 @@ const schema = z.object({
 
 export async function POST(request: Request) {
   try {
+    // Get the user session
+    const session = await getServerSession(authOptions);
+
+    // If no session, return unauthorized
+    if (!session) {
+      return NextResponse.json(
+        {
+          status: "error",
+          message: "Unauthorized",
+        },
+        { status: 401 }
+      );
+    }
+
+    // If the user is not a manager, return forbidden
+    if (!session.user.role || session.user.role !== "Manager") {
+      return NextResponse.json(
+        {
+          status: "error",
+          message: "Forbidden",
+        },
+        { status: 403 }
+      );
+    }
+
     // Parse the request body
     const formData = await request.formData();
 

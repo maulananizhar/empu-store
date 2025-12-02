@@ -32,6 +32,7 @@ import { fetchCategories } from "@/services/categoriesApi";
 import useSWR, { mutate } from "swr";
 import { ProductsIcons } from "@/types/products";
 import { deleteProduct, updateProduct } from "@/services/productsApi";
+import { toast } from "sonner";
 
 export function ProductsActionsCell({ row }: { row: Row<ProductsIcons> }) {
   const product = row.original;
@@ -60,9 +61,10 @@ export function ProductsActionsCell({ row }: { row: Row<ProductsIcons> }) {
           <DropdownMenuLabel>Aksi</DropdownMenuLabel>
 
           <DropdownMenuItem
-            onClick={() =>
-              navigator.clipboard.writeText(product.productId.toString())
-            }>
+            onClick={() => {
+              navigator.clipboard.writeText(product.productId.toString());
+              toast.success("Produk ID disalin ke clipboard");
+            }}>
             Salin Produk ID
           </DropdownMenuItem>
 
