@@ -28,11 +28,11 @@ const chartData = [
 const chartConfig = {
   desktop: {
     label: "Desktop",
-    color: "#000",
+    color: "hsl(14 87% 53%)",
   },
   mobile: {
     label: "Mobile",
-    color: "#000",
+    color: "hsl(14 87% 53%)",
   },
 } satisfies ChartConfig;
 
@@ -87,7 +87,7 @@ export default function Page() {
                 <stop
                   offset="0%"
                   stopColor={chartConfig.desktop.color}
-                  stopOpacity={0.4}
+                  stopOpacity={0.1}
                 />
                 <stop
                   offset="100%"
@@ -99,7 +99,7 @@ export default function Page() {
                 <stop
                   offset="0%"
                   stopColor={chartConfig.mobile.color}
-                  stopOpacity={0.4}
+                  stopOpacity={0.1}
                 />
                 <stop
                   offset="100%"

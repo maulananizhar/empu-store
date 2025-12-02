@@ -17,7 +17,7 @@ export function StatisticCard({
   return (
     <>
       <div className="w-full">
-        <div className="rounded-lg border py-4 bg-gradient-to-t from-gray-100 to-white flex-1 h-full flex flex-col">
+        <div className="rounded-lg border py-4 bg-gradient-to-t from-primary/10 to-white flex-1 h-full flex flex-col">
           <div className="flex justify-between items-center">
             <p className="px-4 py-2 text-sm text-gray-700">{title}</p>
             <Badge className={"mx-4 text-black"} variant="outline">

@@ -99,7 +99,8 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
                   <SidebarMenuItem>
                     <SidebarMenuButton
                       asChild
-                      isActive={pathname === "/dashboard" ? true : false}>
+                      isActive={pathname === "/dashboard" ? true : false}
+                      className="data-[active=true]:text-red-500">
                       <Link href="/dashboard">
                         <LucideGauge className="mr-2 h-4 w-4" />
                         <span>Dashboard</span>
@@ -109,7 +110,8 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
                   <SidebarMenuItem>
                     <SidebarMenuButton
                       asChild
-                      isActive={pathname === "/cashier" ? true : false}>
+                      isActive={pathname === "/cashier" ? true : false}
+                      className="data-[active=true]:text-red-500">
                       <Link href="/cashier">
                         <LucideCalculator className="mr-2 h-4 w-4" />
                         <span>Kasir</span>
@@ -119,7 +121,8 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
                   <SidebarMenuItem>
                     <SidebarMenuButton
                       asChild
-                      isActive={pathname === "/transactions" ? true : false}>
+                      isActive={pathname === "/transactions" ? true : false}
+                      className="data-[active=true]:text-red-500">
                       <Link href="/transactions">
                         <LucideShoppingCart className="mr-2 h-4 w-4" />
                         <span>Transaksi</span>
@@ -130,7 +133,8 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
                     className={session.user.role !== "Manager" ? "hidden" : ""}>
                     <SidebarMenuButton
                       asChild
-                      isActive={pathname === "/products" ? true : false}>
+                      isActive={pathname === "/products" ? true : false}
+                      className="data-[active=true]:text-red-500">
                       <Link href="/products">
                         <LucideBox className="mr-2 h-4 w-4" />
                         <span>Produk</span>
@@ -141,7 +145,8 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
                     className={session.user.role !== "Manager" ? "hidden" : ""}>
                     <SidebarMenuButton
                       asChild
-                      isActive={pathname === "/categories" ? true : false}>
+                      isActive={pathname === "/categories" ? true : false}
+                      className="data-[active=true]:text-red-500">
                       <Link href="/categories">
                         <LucideBoxes className="mr-2 h-4 w-4" />
                         <span>Kategori</span>
@@ -152,7 +157,8 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
                     className={session.user.role !== "Manager" ? "hidden" : ""}>
                     <SidebarMenuButton
                       asChild
-                      isActive={pathname === "/discounts" ? true : false}>
+                      isActive={pathname === "/discounts" ? true : false}
+                      className="data-[active=true]:text-red-500">
                       <Link href="/discounts">
                         <LucideBadgePercent className="mr-2 h-4 w-4" />
                         <span>Diskon</span>
@@ -163,7 +169,8 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
                     className={session.user.role !== "Manager" ? "hidden" : ""}>
                     <SidebarMenuButton
                       asChild
-                      isActive={pathname === "/users" ? true : false}>
+                      isActive={pathname === "/users" ? true : false}
+                      className="data-[active=true]:text-red-500">
                       <Link href="/users">
                         <LucideUser className="mr-2 h-4 w-4" />
                         <span>User</span>

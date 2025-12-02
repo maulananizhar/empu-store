@@ -26,7 +26,9 @@ function CategoryFilter({
     <Button
       variant="outline"
       className={`transition-all duration-300 transform flex-shrink-0 ${
-        categoryId === category.categoryId ? "bg-accent" : ""
+        categoryId === category.categoryId
+          ? "bg-accent border-primary text-primary hover:text-primary"
+          : ""
       }`}
       onClick={() => {
         setCategoryId(category.categoryId);
