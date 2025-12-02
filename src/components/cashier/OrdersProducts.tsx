@@ -2,6 +2,7 @@ import { Discounts } from "@/generated/prisma/browser";
 import { addQuantityToOrderProduct } from "@/services/orderProductsApi";
 import { OrdersProductsExtended } from "@/types/ordersProducts";
 import * as LucideIcons from "lucide-react";
+import { toast } from "sonner";
 import { mutate } from "swr";
 
 type LucideIconName = keyof typeof LucideIcons;
@@ -43,9 +44,11 @@ function PriceDisplay({
 function OrdersProductsCard({
   ordersProduct,
   discounts,
+  status,
 }: {
   ordersProduct: OrdersProductsExtended["OrdersProducts"][number];
   discounts?: Discounts[];
+  status?: string;
 }) {
   const Icon = isLucideIconName(ordersProduct.product.category.icon)
     ? (LucideIcons[ordersProduct.product.category.icon] as React.ComponentType<{
@@ -73,8 +76,15 @@ function OrdersProductsCard({
       <div className="flex text-sm mt-2 items-center">
         <div className="flex justify-center items-center gap-2">
           <LucideIcons.Minus
-            className="h-7 w-7 inline-block mr-1 border px-1.5 py-0.5 rounded cursor-pointer hover:bg-gray-200 duration-200 active:scale-110"
+            className={`h-7 w-7 inline-block mr-1 border px-1.5 py-0.5 rounded cursor-pointer hover:bg-gray-200 duration-200 active:scale-110 ${
+              status === "Sukses" ? "opacity-50 cursor-not-allowed" : ""
+            }`}
             onClick={async () => {
+              if (status === "Sukses") {
+                return toast.error("Transaksi sudah selesai.", {
+                  richColors: true,
+                });
+              }
               await addQuantityToOrderProduct(ordersProduct.orderProductId, -1);
               mutate("/api/orders-product");
               mutate("/api/products");
@@ -82,8 +92,15 @@ function OrdersProductsCard({
           />
           <p className="mr-0.5">{ordersProduct.quantity}</p>
           <LucideIcons.Plus
-            className="h-7 w-7 inline-block bg-gray-800 text-white mr-1 border px-1.5 py-0.5 rounded cursor-pointer hover:bg-gray-950 duration-200 active:scale-110"
+            className={`h-7 w-7 inline-block bg-gray-800 text-white mr-1 border px-1.5 py-0.5 rounded cursor-pointer hover:bg-gray-950 duration-200 active:scale-110 ${
+              status === "Sukses" ? "opacity-50 cursor-not-allowed" : ""
+            }`}
             onClick={async () => {
+              if (status === "Sukses") {
+                return toast.error("Transaksi sudah selesai.", {
+                  richColors: true,
+                });
+              }
               await addQuantityToOrderProduct(ordersProduct.orderProductId, 1);
               mutate("/api/orders-product");
               mutate("/api/products");
