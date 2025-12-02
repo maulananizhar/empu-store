@@ -44,6 +44,7 @@ import {
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { dateRange } from "@/lib/dateRange";
+import { useRouter } from "next/navigation";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -54,6 +55,8 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const router = useRouter();
+
   const [sorting, setSorting] = useState<SortingState>([
     { id: "createdAt", desc: true },
   ]);
@@ -193,6 +196,19 @@ export function DataTable<TData, TValue>({
             </div>
           </PopoverContent>
         </Popover>
+        <Button
+          variant="default"
+          className="ml-2"
+          onClick={() => {
+            const from = range?.from
+              ? range.from.toISOString().split("T")[0]
+              : "";
+            const to = range?.to ? range.to.toISOString().split("T")[0] : "";
+
+            router.push(`/api/orders/export-to-csv?from=${from}&to=${to}`);
+          }}>
+          Ekspor CSV
+        </Button>
       </div>
       <div className="overflow-hidden rounded-md border">
         <div className="mx-4">
