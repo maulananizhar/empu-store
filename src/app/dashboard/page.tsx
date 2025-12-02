@@ -2,42 +2,62 @@
 
 import { StatisticCard } from "@/components/statistic-card";
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { fetchDashboard } from "@/services/dashboardApi";
+import { useState } from "react";
 import { Area, AreaChart, XAxis } from "recharts";
 import useSWR from "swr";
 
-const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
-  { month: "July", desktop: 270, mobile: 220 },
-  { month: "August", desktop: 250, mobile: 200 },
-  { month: "September", desktop: 300, mobile: 230 },
-  { month: "October", desktop: 320, mobile: 250 },
-  { month: "November", desktop: 400, mobile: 300 },
-  { month: "December", desktop: 450, mobile: 350 },
-];
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  date: {
+    label: "Tanggal",
+  },
+  qris: {
+    label: "QRIS",
     color: "hsl(14 87% 53%)",
   },
-  mobile: {
-    label: "Mobile",
-    color: "hsl(14 87% 53%)",
+  cash: {
+    label: "Cash",
+    color: "hsl(34 87% 53%)",
   },
 } satisfies ChartConfig;
 
 export default function Page() {
+  const [timeRange, setTimeRange] = useState("7d");
+
   const { data } = useSWR("/api/dashboard", () => fetchDashboard());
+
+  const filteredData = data?.graphData.filter(item => {
+    const date = new Date(item.date);
+    const referenceDate = new Date();
+    let daysToSubtract = 90;
+    if (timeRange === "30d") {
+      daysToSubtract = 30;
+    } else if (timeRange === "7d") {
+      daysToSubtract = 7;
+    }
+    const startDate = new Date(referenceDate);
+    startDate.setDate(startDate.getDate() - daysToSubtract);
+    return date >= startDate;
+  });
 
   return (
     <>
@@ -73,60 +93,114 @@ export default function Page() {
           subDescription="Dari satu produk"
         />
       </div>
-      <div className="rounded-lg border py-4 bg-gradient-to-t bg-white flex flex-col mt-4 px-4">
-        <div className="flex">
-          <div className="flex-col">
-            <p></p>
+      <Card className="mt-6">
+        <CardHeader className="flex items-center justify-between space-y-0 pb-4 sm:flex-row sm:space-y-0 border-b">
+          <div>
+            <CardTitle>{`Ringkasan Penjualan ${
+              timeRange === "90d"
+                ? "3 Bulan"
+                : timeRange === "30d"
+                ? "30 Hari"
+                : "7 Hari"
+            } Terakhir`}</CardTitle>
+            <CardDescription>
+              Data penjualan berdasarkan perangkat
+            </CardDescription>
           </div>
-          <div></div>
-        </div>
-        <ChartContainer config={chartConfig} className="h-[400px] w-full">
-          <AreaChart accessibilityLayer data={chartData}>
-            <defs>
-              <linearGradient id="desktopGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="0%"
-                  stopColor={chartConfig.desktop.color}
-                  stopOpacity={0.1}
-                />
-                <stop
-                  offset="100%"
-                  stopColor={chartConfig.desktop.color}
-                  stopOpacity={0.05}
-                />
-              </linearGradient>
-              <linearGradient id="mobileGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="0%"
-                  stopColor={chartConfig.mobile.color}
-                  stopOpacity={0.1}
-                />
-                <stop
-                  offset="100%"
-                  stopColor={chartConfig.mobile.color}
-                  stopOpacity={0.05}
-                />
-              </linearGradient>
-            </defs>
-            <ChartTooltip content={<ChartTooltipContent />} />
-            <XAxis dataKey="month" />
-            <Area
-              type="monotone"
-              dataKey="desktop"
-              stroke={chartConfig.desktop.color}
-              fill="url(#desktopGradient)"
-              radius={4}
-            />
-            <Area
-              type="monotone"
-              dataKey="mobile"
-              stroke={chartConfig.mobile.color}
-              fill="url(#mobileGradient)"
-              radius={4}
-            />
-          </AreaChart>
-        </ChartContainer>
-      </div>
+          <Select value={timeRange} onValueChange={setTimeRange}>
+            <SelectTrigger
+              className="hidden w-[160px] rounded-lg sm:ml-auto sm:flex"
+              aria-label="Select a value">
+              <SelectValue placeholder="3 bulan terakhir" />
+            </SelectTrigger>
+            <SelectContent className="rounded-xl">
+              <SelectItem value="90d" className="rounded-lg">
+                3 bulan terakhir
+              </SelectItem>
+              <SelectItem value="30d" className="rounded-lg">
+                30 hari terakhir
+              </SelectItem>
+              <SelectItem value="7d" className="rounded-lg">
+                7 hari terakhir
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </CardHeader>
+        <CardContent>
+          <ChartContainer config={chartConfig} className="h-[400px] w-full">
+            <AreaChart accessibilityLayer data={filteredData}>
+              <defs>
+                <linearGradient id="qrisGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop
+                    offset="0%"
+                    stopColor={chartConfig.qris.color}
+                    stopOpacity={0.1}
+                  />
+                  <stop
+                    offset="100%"
+                    stopColor={chartConfig.qris.color}
+                    stopOpacity={0.05}
+                  />
+                </linearGradient>
+                <linearGradient id="cashGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop
+                    offset="0%"
+                    stopColor={chartConfig.cash.color}
+                    stopOpacity={0.1}
+                  />
+                  <stop
+                    offset="100%"
+                    stopColor={chartConfig.cash.color}
+                    stopOpacity={0.05}
+                  />
+                </linearGradient>
+              </defs>
+              <ChartTooltip
+                content={<ChartTooltipContent />}
+                labelFormatter={value => {
+                  const date = new Date(value);
+                  return date
+                    .toLocaleDateString("id-ID", {
+                      weekday: "long",
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    })
+                    .replace(/\//g, "-");
+                }}
+              />
+              <XAxis
+                dataKey="date"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                minTickGap={32}
+                tickFormatter={value => {
+                  const date = new Date(value);
+                  return date.toLocaleDateString("id-ID", {
+                    day: "2-digit",
+                    month: "short",
+                  });
+                }}
+              />
+              <Area
+                type="monotone"
+                dataKey="qris"
+                stroke={chartConfig.qris.color}
+                fill="url(#qrisGradient)"
+                radius={4}
+              />
+              <Area
+                type="monotone"
+                dataKey="cash"
+                stroke={chartConfig.cash.color}
+                fill="url(#cashGradient)"
+                radius={4}
+              />
+            </AreaChart>
+          </ChartContainer>
+        </CardContent>
+      </Card>
     </>
   );
 }
