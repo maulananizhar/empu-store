@@ -59,7 +59,7 @@ export default function Page() {
   const [totalDiscount, setTotalDiscount] = useState<number>(0);
   const [total, setTotal] = useState<number>(0);
   const [changeAmount, setChangeAmount] = useState<number>(0);
-  const [paymentMethodId, setPaymentMethodId] = useState<number>(1);
+  const [paymentMethodId, setPaymentMethodId] = useState<number>(0);
 
   // Zustand store can be used here if needed
   const { orderId, setOrderId } = useOrder();
@@ -135,7 +135,12 @@ export default function Page() {
 
   // Update changeAmount when paymentAmount or total change
   useEffect(() => {
-    if (debouncedPaymentAmount && total) {
+    if (
+      debouncedPaymentAmount &&
+      total &&
+      paymentMethodId != 0 &&
+      ordersProducts?.status === "Sukses"
+    ) {
       setChangeAmount(debouncedPaymentAmount - total);
       updateOrder(orderId || 0, {
         total: total,
@@ -196,7 +201,11 @@ export default function Page() {
                 <p className="text-center text-red-500">Gagal memuat produk.</p>
               ) : products ? (
                 products.map(product => (
-                  <CashierMenuCard key={product.productId} product={product} />
+                  <CashierMenuCard
+                    key={product.productId}
+                    product={product}
+                    status={ordersProducts?.status}
+                  />
                 ))
               ) : null}
             </div>
@@ -226,6 +235,7 @@ export default function Page() {
                   key={index}
                   ordersProduct={ordersProduct}
                   discounts={discounts}
+                  status={ordersProducts.status}
                 />
               ))
             ) : (
@@ -264,7 +274,7 @@ export default function Page() {
             paymentAmount={paymentAmount || 0}
             changeAmount={changeAmount}
             paymentMethods={paymentMethods || []}
-            paymentMethodId={paymentMethodId || 0}
+            paymentMethodId={paymentMethodId}
             status={ordersProducts?.status || "Pending"}
             setPaymentAmount={setPaymentAmount}
             setPaymentMethodId={setPaymentMethodId}
