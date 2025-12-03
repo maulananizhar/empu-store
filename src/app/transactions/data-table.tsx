@@ -201,9 +201,19 @@ export function DataTable<TData, TValue>({
           className="ml-2"
           onClick={() => {
             const from = range?.from
-              ? range.from.toISOString().split("T")[0]
+              ? (() => {
+                  const expiredDate = new Date(range.from);
+                  expiredDate.setHours(0, 0, 0, 0);
+                  return expiredDate.toISOString();
+                })()
               : "";
-            const to = range?.to ? range.to.toISOString().split("T")[0] : "";
+            const to = range?.to
+              ? (() => {
+                  const expiredDate = new Date(range.to);
+                  expiredDate.setHours(23, 59, 59, 0);
+                  return expiredDate.toISOString();
+                })()
+              : "";
 
             router.push(`/api/orders/export-to-csv?from=${from}&to=${to}`);
           }}>
