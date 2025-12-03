@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@/generated/prisma/client";
-import { DashboardData } from "@/types/dashboard";
 
 const prisma = new PrismaClient();
 
@@ -174,7 +173,7 @@ export async function GET() {
             quantity: sumHighestSellingProduct[0]?._sum.quantity || 0,
           },
           graphData: await getSalesSummaryLast3Months(),
-        } as DashboardData,
+        },
       },
       { status: 200 }
     );
