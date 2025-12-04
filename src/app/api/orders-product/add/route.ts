@@ -84,6 +84,24 @@ export async function POST(request: Request) {
       );
     }
 
+    // Get current stock
+    const productStock = await prisma.products.findUnique({
+      where: {
+        productId: validatedFields.data.productId,
+      },
+    });
+
+    // Check if stock is sufficient
+    if (productStock && productStock.stock < 1) {
+      return NextResponse.json(
+        {
+          status: "error",
+          message: "Stok tidak mencukupi.",
+        },
+        { status: 400 }
+      );
+    }
+
     // Check for duplicate entry
     const duplicateCheck = await prisma.ordersProducts.findFirst({
       where: {
@@ -120,24 +138,6 @@ export async function POST(request: Request) {
           data: orderProduct,
         },
         { status: 200 }
-      );
-    }
-
-    // Get current stock
-    const productStock = await prisma.products.findUnique({
-      where: {
-        productId: validatedFields.data.productId,
-      },
-    });
-
-    // Check if stock is sufficient
-    if (productStock && productStock.stock < 1) {
-      return NextResponse.json(
-        {
-          status: "error",
-          message: "Stok tidak mencukupi.",
-        },
-        { status: 400 }
       );
     }
 
