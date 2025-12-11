@@ -45,7 +45,7 @@ async function getSalesSummaryLast3Months() {
     if (pay === "qris") {
       result[date].qris += Number(order.total);
     } else if (pay === "cash") {
-      result[date].cash += Number(order.cash);
+      result[date].cash += Number(order.total);
     }
   }
 

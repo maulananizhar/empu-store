@@ -84,6 +84,7 @@ function TotalCounter({
               className="text-right w-24 h-6 py-0 px-1"
               placeholder="0"
               value={paymentAmount?.toLocaleString("id-ID")}
+              disabled={status === "Sukses" || paymentMethodId === 2}
               onChange={e => {
                 const value = e.target.value.replace(/[^0-9]/g, "");
                 setPaymentAmount(Number(value) || 0);
@@ -111,7 +112,10 @@ function TotalCounter({
               {paymentMethods.map(method => (
                 <DropdownMenuItem
                   key={method.paymentId}
-                  onClick={() => setPaymentMethodId(method.paymentId)}>
+                  onClick={() => {
+                    setPaymentMethodId(method.paymentId);
+                    setPaymentAmount(total);
+                  }}>
                   {method.method}
                 </DropdownMenuItem>
               ))}
